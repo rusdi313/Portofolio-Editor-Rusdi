@@ -217,7 +217,7 @@ const Home = () => {
                 {/* CTA Buttons */}
                 <div className="flex flex-row gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
                   <CTAButton href="#Portofolio" text="Portfolio" icon={ExternalLink} />
-                  <CTAButton href="#Contact" text="Contact" icon={Mail} />
+                  <CTAButton href="https://portofolio-rusdi.vercel.app/" text="Contact" icon={ExternalLink} />
                 </div>
 
                 {/* Social Links */}
