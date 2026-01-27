@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://portofolio-rusdi.vercel.app/sitemap.xml
