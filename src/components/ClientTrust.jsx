@@ -11,18 +11,19 @@ const clients = [
   { id: 7, name: "tamanati", logo: "tamanati.png" },
   { id: 8, name: "goodsmoment", logo: "goodsmoment.png" },
   { id: 9, name: "alegra", logo: "alegra.svg" },
+  { id: 9, name: "aftrday", logo: "aftrday.png" },
 ];
 
 const ClientTrust = () => {
   return (
-    <section id="Clients" className="pt-0 pb-20 relative overflow-hidden">
+    <section id="Clients" className="pt-20 pb-20 relative overflow-hidden">
         
         <div className="container mx-auto px-[5%]">
             <div className="text-center mb-12" data-aos="fade-down">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 border border-[#6366f1]/20 mb-4 shadow-sm backdrop-blur-sm">
+                {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 border border-[#6366f1]/20 mb-4 shadow-sm backdrop-blur-sm">
                     <Sparkles className="w-4 h-4 text-[#6366f1]" />
                     <span className="text-sm font-medium text-[#6366f1]">Trusted Partnerships</span>
-                </div>
+                </div> */}
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                     Trusted by <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">Industry Leaders</span>
                 </h2>
@@ -35,7 +36,7 @@ const ClientTrust = () => {
             <div className="flex flex-wrap justify-center gap-8 md:gap-12 items-center">
                 {clients.map((client, index) => {
                     // Logic untuk memperbesar logo tertentu
-                    const isLargeLogo = ["bravado", "tamanati", "goodsmoment", "alegra"].includes(client.name);
+                    const isLargeLogo = ["bravado", "tamanati", "goodsmoment", "alegra", "aftrday"].includes(client.name);
 
                     return (
                         <div 
