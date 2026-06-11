@@ -1,0 +1,26 @@
+name: Supabase Keep-Alive Ping
+
+# Trigger script ini berjalan
+on:
+  schedule:
+    # Berjalan setiap hari ke-2 pada pukul 00:00 UTC
+    - cron: '0 0 */2 * *' 
+  workflow_dispatch: # Mengizinkan tombol "Run workflow" manual di dashboard GitHub
+
+jobs:
+  ping_database:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send API Request to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        # Ganti 'nama_tabel_kamu' dengan tabel yang ada di databasemu
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" -X GET "${SUPABASE_URL}/rest/v1/projects?select=id&limit=1" \
+          -H "apikey: ${SUPABASE_KEY}" \
+          -H "Authorization: Bearer ${SUPABASE_KEY}"
+          
+      - name: Log Timestamp
+        run: echo "Ping executed on $(date)"
