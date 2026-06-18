@@ -1,247 +1,87 @@
-import React, { useState, useEffect, useCallback, memo } from "react"
-import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
-import AOS from 'aos'
-import 'aos/dist/aos.css'
-import MobileShowcase from "../components/MobileShowcase"
-import { Helmet } from 'react-helmet-async'
-
-// --- KOMPONEN MEMOIZED (TEMA LIGHT) ---
-
-const StatusBadge = memo(() => (
-  <div className="inline-block animate-float lg:mx-0" data-aos="zoom-in" data-aos-delay="400">
-    <div className="relative group">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-full blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-      <div className="relative px-3 sm:px-4 py-2 rounded-full bg-white/60 backdrop-blur-xl border border-slate-200 shadow-sm">
-        <span className="bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-transparent bg-clip-text sm:text-sm text-[0.7rem] font-medium flex items-center">
-          <Sparkles className="sm:w-4 sm:h-4 w-3 h-3 mr-2 text-purple-500" />
-          Available for Hire
-        </span>
-      </div>
-    </div>
-  </div>
-));
-
-const MainTitle = memo(() => (
-  <div className="space-y-2" data-aos="fade-up" data-aos-delay="600">
-    <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
-      <span className="relative inline-block">
-        <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-10"></span>
-        <span className="relative text-[#0f172a]"> {/* Warna Gelap */}
-          Visual
-        </span>
-      </span>
-      <br />
-      <span className="relative inline-block mt-2">
-        <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
-        <span className="relative bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
-          Storyteller
-        </span>
-      </span>
-    </h1>
-  </div>
-));
-
-const TechStack = memo(({ tech }) => (
-  <div className="px-4 py-2 hidden sm:block rounded-full bg-white/60 backdrop-blur-sm border border-slate-200 text-sm text-slate-600 hover:bg-white hover:text-purple-600 hover:border-purple-200 transition-all shadow-sm">
-    {tech}
-  </div>
-));
-
-const CTAButton = memo(({ href, text, icon: Icon }) => (
-  <a href={href}>
-    <button className="group relative w-[160px]">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-30 blur-md group-hover:opacity-60 transition-all duration-700"></div>
-      <div className="relative h-11 bg-white backdrop-blur-xl rounded-lg border border-slate-100 leading-none overflow-hidden shadow-md">
-        <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 bg-gradient-to-r from-[#4f52c9]/10 to-[#8644c5]/10"></div>
-        <span className="absolute inset-0 flex items-center justify-center gap-2 text-sm group-hover:gap-3 transition-all duration-300">
-          <span className="text-slate-700 font-medium z-10 group-hover:text-purple-700">
-            {text}
-          </span>
-          <Icon className={`w-4 h-4 text-slate-700 ${text === 'Contact' ? 'group-hover:translate-x-1' : 'group-hover:rotate-45'} transform transition-all duration-300 z-10 group-hover:text-purple-700`} />
-        </span>
-      </div>
-    </button>
-  </a>
-));
-
-const SocialLink = memo(({ icon: Icon, link }) => (
-  <a href={link} target="_blank" rel="noopener noreferrer">
-    <button className="group relative p-3">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-10 group-hover:opacity-30 transition duration-300"></div>
-      <div className="relative rounded-xl bg-white/70 backdrop-blur-xl p-2 flex items-center justify-center border border-slate-200 shadow-sm group-hover:border-purple-200 transition-all duration-300">
-        <Icon className="w-5 h-5 text-slate-500 group-hover:text-purple-600 transition-colors" />
-      </div>
-    </button>
-  </a>
-));
-
-// --- KONSTANTA DATA (DISESUAIKAN DENGAN PHOTO/VIDEO) ---
-const TYPING_SPEED = 100;
-const ERASING_SPEED = 50;
-const PAUSE_DURATION = 2000;
-const WORDS = ["Professional Photographer", "Video Editor", "Content Creator"]; // Diubah
-const TECH_STACK = ["Premiere Pro", "Capcut", "Lightroom", "VSCO", "Illustrator", "Canva"]; // Diubah
-const SOCIAL_LINKS = [
-  { icon: Github, link: "https://github.com/rusdi313" },
-  { icon: Linkedin, link: "https://www.linkedin.com/in/rusdi-aulia-romadhon-11b44229b/" },
-  { icon: Instagram, link: "https://www.instagram.com/rusdirmdhn_/?hl=id" }
-];
+import React from "react";
+import TextStagger from "../components/TextStagger";
+import { motion } from "framer-motion";
 
 const Home = () => {
-  const [text, setText] = useState("")
-  const [isTyping, setIsTyping] = useState(true)
-  const [wordIndex, setWordIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
-  const [isLoaded, setIsLoaded] = useState(false)
-  
-  useEffect(() => {
-    const initAOS = () => {
-      AOS.init({
-        once: true,
-        offset: 10,
-      });
-    };
-
-    initAOS();
-    window.addEventListener('resize', initAOS);
-    return () => window.removeEventListener('resize', initAOS);
-  }, []);
-
-  useEffect(() => {
-    setIsLoaded(true);
-    return () => setIsLoaded(false);
-  }, []);
-
-  const handleTyping = useCallback(() => {
-    if (isTyping) {
-      if (charIndex < WORDS[wordIndex].length) {
-        setText(prev => prev + WORDS[wordIndex][charIndex]);
-        setCharIndex(prev => prev + 1);
-      } else {
-        setTimeout(() => setIsTyping(false), PAUSE_DURATION);
-      }
-    } else {
-      if (charIndex > 0) {
-        setText(prev => prev.slice(0, -1));
-        setCharIndex(prev => prev - 1);
-      } else {
-        setWordIndex(prev => (prev + 1) % WORDS.length);
-        setIsTyping(true);
-      }
-    }
-  }, [charIndex, isTyping, wordIndex]);
-
-  useEffect(() => {
-    const timeout = setTimeout(
-      handleTyping,
-      isTyping ? TYPING_SPEED : ERASING_SPEED
-    );
-    return () => clearTimeout(timeout);
-  }, [handleTyping]);
-
-  // --- SEO Configuration ---
-  const personSchema = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Rusdi Aulia Romadhon",
-    "url": "https://portofolio-rusdi.vercel.app/",
-    "image": "https://rusdi-portofolio.vercel.app/Photo.png",
-    "sameAs": [
-      "https://github.com/rusdi313",
-      "https://www.linkedin.com/in/rusdi-aulia-romadhon-11b44229b/",
-      "https://www.instagram.com/rusdirmdhn_/?hl=id"
-    ],
-    "jobTitle": "Photographer & Video Editor",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Freelance"
-    },
-    "description": "Portofolio Rusdi Aulia Romadhon, Photographer, Videographer, dan Editor profesional."
-  };
-
   return (
-    // UBAH BACKGROUND DISINI: bg-[#f8fafc] untuk warna putih terang
-    <div className="min-h-screen bg-[#f8fafc] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%]" id="Home">
+    <div id="Home" className="relative w-full min-h-screen bg-[#000000] text-white overflow-hidden flex flex-col selection:bg-white selection:text-black">
       
-      <Helmet>
-        <title>Rusdi Aulia Romadhon | Visual Storyteller</title>
-        <meta name="description" content="Selamat datang di portofolio resmi Rusdi Aulia Romadhon. Professional Photographer dan Video Editor." />
-        <meta name="keywords" content="Rusdi Aulia Romadhon, Photographer, Videographer, Video Editor, Premiere Pro, After Effects" />
-        <meta name="author" content="Rusdi Aulia Romadhon" />
-        <meta property="og:title" content="Rusdi Aulia Romadhon - Visual Storyteller" />
-        <meta property="og:description" content="Lihat karya photography dan videography terbaru dari Rusdi Aulia Romadhon." />
-        <meta property="og:image" content="/Photo.png" />
-        <meta property="og:url" content="https://portofolio-rusdi.vercel.app/" />
-        <script type="application/ld+json">
-          {JSON.stringify(personSchema)}
-        </script>
-      </Helmet>
+      {/* Background Cinematic Overlay */}
+      <div className="absolute inset-0 z-0">
+        {/* Subtle noise texture or radial glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(50,50,50,0.4)_0%,_rgba(0,0,0,1)_70%)]"></div>
+      </div>
 
-      <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
+      {/* Swiss Grid Overlay - Minimalist */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.2 }}
+        className="absolute inset-0 z-0 pointer-events-none"
+      >
+        <div className="absolute top-0 bottom-0 left-6 md:left-12 border-l border-white/[0.05]"></div>
+        <div className="absolute top-0 bottom-0 right-6 md:right-12 border-r border-white/[0.05]"></div>
+        <div className="absolute top-1/2 left-0 w-full border-t border-white/[0.03]"></div>
         
-        <div className="container mx-auto min-h-screen flex flex-col justify-center pt-32 lg:pt-0"> 
-          
-          <div className="flex flex-col lg:flex-row items-center justify-center md:justify-between gap-10 lg:gap-20">
-            
-            {/* Left Column */}
-            <div className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1"
-              data-aos="fade-right"
-              data-aos-delay="200">
-              
-              <div className="space-y-4 sm:space-y-6">
-                <StatusBadge />
-                <MainTitle />
+        {/* Crosshairs */}
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 text-white/20 text-xs font-light">+</div>
+        <div className="absolute top-3/4 left-3/4 -translate-x-1/2 text-white/20 text-xs font-light">+</div>
+      </motion.div>
 
-                {/* Typing Effect - Ubah warna text jadi gelap */}
-                <div className="h-8 flex items-center" data-aos="fade-up" data-aos-delay="800">
-                  <span className="text-xl md:text-2xl bg-slate-700 bg-clip-text text-transparent font-light">
-                    {text}
-                  </span>
-                  <span className="w-[3px] h-6 bg-gradient-to-t from-[#6366f1] to-[#a855f7] ml-1 animate-blink"></span>
-                </div>
-
-                {/* Description - Ubah warna text jadi abu-abu gelap */}
-                <p className="text-base md:text-lg text-slate-600 max-w-xl leading-relaxed font-light"
-                  data-aos="fade-up"
-                  data-aos-delay="1000">
-                  Capturing moments, creating emotions. I specialize in bringing stories to life through lens and editing.
-                </p>
-
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-3 justify-start" data-aos="fade-up" data-aos-delay="1200">
-                  {TECH_STACK.map((tech, index) => (
-                    <TechStack key={index} tech={tech} />
-                  ))}
-                </div>
-
-                {/* CTA Buttons */}
-                <div className="flex flex-row gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
-                  <CTAButton href="#Portofolio" text="Portfolio" icon={ExternalLink} />
-                  <CTAButton href="https://portofolio-rusdi.vercel.app/" text="Other Porto" icon={ExternalLink} />
-                </div>
-
-                {/* Social Links */}
-                <div className="hidden sm:flex gap-4 justify-start" data-aos="fade-up" data-aos-delay="1600">
-                  {SOCIAL_LINKS.map((social, index) => (
-                    <SocialLink key={index} {...social} />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - MOBILE SHOWCASE */}
-            <div className="w-full lg:w-1/2 h-auto relative flex items-center justify-center order-2 lg:order-2 mb-12 lg:mb-0"
-              data-aos="fade-left"
-              data-aos-delay="600">
-              
-              <MobileShowcase />
-
-            </div>
+      {/* Main Content */}
+      <div className="relative z-10 px-6 md:px-12 w-full max-w-[1600px] mx-auto flex flex-col h-full flex-grow pt-32 pb-12">
+        
+        {/* Top Header Section inside Home */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end w-full mb-auto mt-12">
+          <div className="max-w-2xl">
+            <TextStagger 
+              text="Premium visual storytelling and cinematic experiences for modern brands."
+              delay={0.03}
+              duration={0.8}
+              color="#ffffff"
+              className="text-3xl md:text-5xl lg:text-6xl font-medium tracking-tighter leading-[1.1] mb-8"
+              trigger="animate"
+            />
           </div>
+          
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ delay: 1, duration: 0.8 }}
+             className="flex flex-col items-start md:items-end space-y-2 text-xs font-bold uppercase tracking-widest text-white/50"
+          >
+             <span>Based in Jakarta</span>
+             <span className="flex items-center"><span className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span> Available for work</span>
+          </motion.div>
+        </div>
+
+        {/* Huge Bottom Typography */}
+        <div className="w-full flex justify-between items-end mt-24 relative">
+          
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="hidden md:flex flex-col space-y-2 text-xs uppercase tracking-widest font-medium text-white/40 mb-4"
+          >
+            <span>Scroll to explore</span>
+            <div className="w-[1px] h-12 bg-white/40 mt-4 origin-top animate-pulse"></div>
+          </motion.div>
+
+          <motion.h1 
+             initial={{ opacity: 0, y: 100, rotate: 2 }}
+             animate={{ opacity: 1, y: 0, rotate: 0 }}
+             transition={{ delay: 0.5, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+             className="text-[6rem] sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black tracking-tighter leading-[0.8] select-none text-transparent ml-auto origin-bottom"
+             style={{ WebkitTextStroke: "2px rgba(255,255,255,0.9)" }}
+          >
+             RUSDI
+          </motion.h1>
+          
         </div>
       </div>
     </div>
   );
 };
 
-export default memo(Home);
+export default Home;

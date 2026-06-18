@@ -1,314 +1,113 @@
-import React, { useEffect, useState, memo, useMemo } from "react"
-import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles } from "lucide-react"
-import AOS from 'aos'
-import 'aos/dist/aos.css'
-import { supabase } from "../supabase"
+import React from "react";
+import TextStagger from "../components/TextStagger";
+import { motion } from "framer-motion";
+import { supabase } from "../supabase";
 
-// Memoized Components
-const Header = memo(() => (
-  <div className="text-center lg:mb-8 mb-2 px-[5%]">
-    <div className="inline-block relative group">
-      <h2 
-        className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]" 
-        data-aos="zoom-in-up"
-        data-aos-duration="600"
-      >
-        About Me
-      </h2>
-    </div>
-    <p 
-      className="mt-2 text-gray-600 max-w-2xl mx-auto text-base sm:text-lg flex items-center justify-center gap-2"
-      data-aos="zoom-in-up"
-      data-aos-duration="800"
-    >
-      <Sparkles className="w-5 h-5 text-purple-400" />
-      Transforming ideas into digital experiences
-      <Sparkles className="w-5 h-5 text-purple-400" />
-    </p>
-  </div>
-));
+const About = () => {
+  const [profileUrl, setProfileUrl] = React.useState("");
 
-const ProfileImage = memo(() => (
-  <div className="flex justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
-    <div 
-      className="relative group" 
-      data-aos="fade-up"
-      data-aos-duration="1000"
-    >
-      <div className="absolute -inset-6 opacity-[25%] z-0 hidden sm:block">
-        <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-indigo-500 to-purple-600 rounded-full blur-2xl animate-spin-slower" />
-        <div className="absolute inset-0 bg-gradient-to-l from-fuchsia-500 via-rose-500 to-pink-600 rounded-full blur-2xl animate-pulse-slow opacity-50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-600 via-cyan-500 to-teal-400 rounded-full blur-2xl animate-float opacity-50" />
-      </div>
-
-      <div className="relative">
-        <div className="w-72 h-72 sm:w-80 sm:h-80 rounded-full overflow-hidden shadow-[0_0_40px_rgba(120,119,198,0.3)] transform transition-all duration-700 group-hover:scale-105">
-          <div className="absolute inset-0 border-4 border-white/20 rounded-full z-20 transition-all duration-700 group-hover:border-white/40 group-hover:scale-105" />
-          
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 z-10 transition-opacity duration-700 group-hover:opacity-0 hidden sm:block" />
-          <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 via-transparent to-blue-500/20 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 hidden sm:block" />
-          
-          <img
-            src="/rusdi4.jpeg" 
-            alt="Profile"
-            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
-            loading="lazy"
-          />
-
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 z-20 hidden sm:block">
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/10 to-transparent transform translate-y-full group-hover:-translate-y-full transition-transform duration-1000 delay-100" />
-            <div className="absolute inset-0 rounded-full border-8 border-white/10 scale-0 group-hover:scale-100 transition-transform duration-700 animate-pulse-slow" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-));
-
-// --- STATCARD DENGAN STYLE QUOTE ---
-const StatCard = memo(({ icon: Icon, color, value, label, description, animation }) => (
-  <div data-aos={animation} data-aos-duration={1300} className="relative group">
-    <div className="relative z-10 bg-gradient-to-br from-[#6366f1]/5 via-transparent to-[#a855f7]/5 border border-[#6366f1]/30 rounded-2xl p-6 backdrop-blur-md shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col justify-between">
-      
-      {/* Decorative Orbs (Sama seperti di Quote) */}
-      <div className="absolute top-2 right-4 w-16 h-16 bg-gradient-to-r from-[#6366f1]/20 to-[#a855f7]/20 rounded-full blur-xl group-hover:opacity-75 transition-opacity"></div>
-      <div className="absolute -bottom-4 -left-2 w-12 h-12 bg-gradient-to-r from-[#a855f7]/20 to-[#6366f1]/20 rounded-full blur-lg group-hover:opacity-75 transition-opacity"></div>
-      
-      <div className="flex items-center justify-between mb-4 relative z-20">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#6366f1]/10 border border-[#6366f1]/20 transition-transform group-hover:rotate-6">
-          <Icon className="w-8 h-8 text-[#6366f1]" />
-        </div>
-        <span 
-          className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]"
-          data-aos="fade-up-left"
-          data-aos-duration="1500"
-          data-aos-anchor-placement="top-bottom"
-        >
-          {value}
-        </span>
-      </div>
-
-      <div className="relative z-20">
-        <p 
-          className="text-sm uppercase tracking-wider text-gray-600 font-semibold mb-2"
-          data-aos="fade-up"
-          data-aos-duration="800"
-          data-aos-anchor-placement="top-bottom"
-        >
-          {label}
-        </p>
-        <div className="flex items-center justify-between">
-          <p 
-            className="text-xs text-gray-500 font-medium"
-            data-aos="fade-up"
-            data-aos-duration="1000"
-            data-aos-anchor-placement="top-bottom"
-          >
-            {description}
-          </p>
-          <ArrowUpRight className="w-4 h-4 text-[#6366f1] group-hover:translate-x-1 transition-transform" />
-        </div>
-      </div>
-    </div>
-  </div>
-));
-
-const AboutPage = () => {
-  const [projectCount, setProjectCount] = useState(0);
-  const [videoProjectCount, setVideoProjectCount] = useState(0);
-
-  const YearExperience = useMemo(() => {
-    const startDate = new Date("2023-10-03");
-    const today = new Date();
-    const experience = today.getFullYear() - startDate.getFullYear() -
-      (today < new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate()) ? 1 : 0);
-    return experience;
-  }, []);
-
-  useEffect(() => {
-    const fetchCounts = async () => {
-      const { count: projCount, error: projError } = await supabase
-        .from('projects')
-        .select('*', { count: 'exact', head: true });
-      
-      if (!projError) {
-        setProjectCount(projCount);
-      }
-
-      const { count: videoCount, error: videoError } = await supabase
-        .from('video_projects')
-        .select('*', { count: 'exact', head: true });
-      
-      if (!videoError) {
-        setVideoProjectCount(videoCount);
+  React.useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const { data, error } = await supabase.from("portfolio_profiles").select("*").single();
+        if (data && !error) {
+          setProfileUrl(data.image_url || "");
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
       }
     };
-
-    fetchCounts();
+    fetchProfileData();
   }, []);
-
-  useEffect(() => {
-    const initAOS = () => {
-      AOS.init({
-        once: false, 
-      });
-    };
-
-    initAOS();
-    
-    let resizeTimer;
-    const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initAOS, 250);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(resizeTimer);
-    };
-  }, []);
-
-  const statsData = useMemo(() => [
-    {
-      icon: Code,
-      // Color prop ini tidak lagi digunakan untuk background utama karena sudah di-override oleh style baru di StatCard,
-      // tapi strukturnya kita biarkan
-      color: "from-[#6366f1] to-[#a855f7]",
-      value: projectCount,
-      label: "Photo Projects",
-      description: "Moments captured",
-      animation: "fade-right",
-    },
-    {
-      icon: Award,
-      color: "from-[#a855f7] to-[#6366f1]",
-      value: videoProjectCount,
-      label: "Video Projects",
-      description: "Cinematic stories told",
-      animation: "fade-up",
-    },
-    {
-      icon: Globe,
-      color: "from-[#6366f1] to-[#a855f7]",
-      value: YearExperience,
-      label: "Years of Experience",
-      description: "Continuous learning journey",
-      animation: "fade-left",
-    },
-  ], [projectCount, videoProjectCount, YearExperience]);
 
   return (
-    <div
-      className="h-auto pb-10 text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0" 
-      id="About"
-    >
-      <Header />
-
-      <div className="w-full mx-auto pt-8 sm:pt-12 relative">
-        <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className="space-y-6 text-center lg:text-left">
-            <h2 
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold"
-              data-aos="fade-right"
-              data-aos-duration="1000"
-            >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
-                Hello, I'm
-              </span>
-              <span 
-                className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]"
-                data-aos="fade-right"
-                data-aos-duration="1300"
-              >
-                Rusdi Aulia Romadhon
-              </span>
-            </h2>
-            
-            <p 
-              className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed text-justify pb-4 sm:pb-0"
-              data-aos="fade-right"
-              data-aos-duration="1500"
-            >
-             Seorang Mahasiswa Teknik Informatika yang memiliki ketertarikan besar dalam dunia Fotografi dan Videografi. Saya berfokus pada menciptakan visual yang bercerita dan sinematik, serta selalu berusaha mengabadikan momen terbaik dalam setiap frame yang saya ambil.
-            </p>
-
-            {/* Quote Section (Style Template) */}
-            <div 
-              className="relative bg-gradient-to-br from-[#6366f1]/5 via-transparent to-[#a855f7]/5 border border-[#6366f1]/30 rounded-2xl p-4 my-6 backdrop-blur-md shadow-lg overflow-hidden"
-              data-aos="fade-up"
-              data-aos-duration="1700"
-            >
-              <div className="absolute top-2 right-4 w-16 h-16 bg-gradient-to-r from-[#6366f1]/20 to-[#a855f7]/20 rounded-full blur-xl"></div>
-              <div className="absolute -bottom-4 -left-2 w-12 h-12 bg-gradient-to-r from-[#a855f7]/20 to-[#6366f1]/20 rounded-full blur-lg"></div>
-              
-              <div className="absolute top-3 left-4 text-[#6366f1] opacity-30">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-                </svg>
-              </div>
-              
-              <blockquote className="text-gray-500 text-center lg:text-left italic font-medium text-sm relative z-10 pl-6">
-                "Capturing the unseen, framing the unforgettable. Because every frame tells a story that words cannot describe."
-              </blockquote>
-            </div>
-
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
-              <a href="https://drive.google.com/file/d/1kzpkH0cEFwwuwbE-Z5Zplop3F0bdA-KA/view?usp=sharing" className="w-full lg:w-auto">
-                <button 
-                  data-aos="fade-up"
-                  data-aos-duration="800"
-                  className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl "
-                >
-                  <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Download CV
-                </button>
-              </a>
-              <a href="#Portofolio" className="w-full lg:w-auto">
-                {/* UBAH TOMBOL VIEW PROJECTS: Style Quote (Glassy Purple) */}
-                <button 
-                  data-aos="fade-up"
-                  data-aos-duration="1000"
-                  className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-br from-[#6366f1]/5 via-transparent to-[#a855f7]/5 border border-[#6366f1]/30 text-[#6366f1] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl"
-                >
-                  <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
-                </button>
-              </a>
-            </div>
-          </div>
-
-          <ProfileImage />
+    <div id="About" className="w-full bg-[#f4f4f4] text-[#000000] pt-24 pb-32">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12">
+        
+        {/* Section Header */}
+        <div className="flex items-center justify-between border-b border-black/10 pb-6 mb-16 md:mb-32">
+          <span className="text-xs md:text-sm font-bold uppercase tracking-[0.2em]">01 &mdash; About</span>
+          <span className="text-xs md:text-sm font-medium text-black/50 tracking-widest uppercase">Overview</span>
         </div>
 
-        <a href="#Portofolio">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer">
-            {statsData.map((stat) => (
-              <StatCard key={stat.label} {...stat} />
-            ))}
-          </div>
-        </a>
-      </div>
+        {/* Massive Text Entry */}
+        <div className="w-full flex flex-col items-start mb-24 md:mb-40">
+           <TextStagger 
+              text="Design-forward editing crafting bold visuals, structured layouts, and high-impact cinematic experiences."
+              delay={0.02}
+              duration={0.6}
+              color="#000000"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] font-bold tracking-tighter leading-[1.0] text-left max-w-6xl"
+              trigger="inView"
+           />
+        </div>
 
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
-        }
-        @keyframes spin-slower {
-          to { transform: rotate(360deg); }
-        }
-        .animate-bounce-slow {
-          animation: bounce 3s infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse 3s infinite;
-        }
-        .animate-spin-slower {
-          animation: spin-slower 8s linear infinite;
-        }
-      `}</style>
+        {/* Content Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+           
+           {/* Left: Vertical Image */}
+           <motion.div 
+             initial={{ opacity: 0, scale: 0.95 }}
+             whileInView={{ opacity: 1, scale: 1 }}
+             viewport={{ once: true, margin: "-100px" }}
+             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+             className="lg:col-span-5 relative"
+           >
+             <div className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-black/20"></div>
+             <div className="absolute -bottom-4 -right-4 w-24 h-24 border-b-2 border-r-2 border-black/20"></div>
+             
+             {profileUrl ? (
+               <img 
+                 src={profileUrl} 
+                 alt="Profile" 
+                 className="w-full aspect-[3/4] object-cover filter grayscale hover:grayscale-0 transition-all duration-1000 ease-out"
+               />
+             ) : (
+               <div className="w-full aspect-[3/4] bg-black/5 animate-pulse flex items-center justify-center">
+                  <span className="text-black/30 font-bold text-xs uppercase tracking-[0.2em]">Loading Profile</span>
+               </div>
+             )}
+           </motion.div>
+
+           {/* Right: Text Information */}
+           <div className="lg:col-span-7 flex flex-col space-y-16 md:space-y-24 mt-8 lg:mt-0">
+              
+              {/* Feature 1 */}
+              <motion.div 
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 0.8, delay: 0.2 }}
+                 className="flex flex-col md:flex-row md:items-start gap-4 md:gap-12"
+              >
+                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-black/40 mt-2 shrink-0 w-24">(Who)</span>
+                 <p className="text-2xl md:text-4xl text-black font-medium leading-[1.2] tracking-tight">
+                   Seorang Mahasiswa Teknik Informatika yang memiliki ketertarikan besar dalam dunia Fotografi dan Videografi. Saya berfokus pada menciptakan visual yang bercerita dan sinematik.
+                 </p>
+              </motion.div>
+
+              <div className="w-full h-px bg-black/10"></div>
+
+              {/* Feature 2 */}
+              <motion.div 
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 0.8, delay: 0.3 }}
+                 className="flex flex-col md:flex-row md:items-start gap-4 md:gap-12"
+              >
+                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-black/40 mt-2 shrink-0 w-24">(Vision)</span>
+                 <p className="text-2xl md:text-4xl text-black font-medium leading-[1.2] tracking-tight">
+                   Selalu berusaha mengabadikan momen terbaik dalam setiap frame. Memadukan estetika modern dengan fungsionalitas visual untuk memberikan hasil yang berdampak.
+                 </p>
+              </motion.div>
+
+           </div>
+        </div>
+
+      </div>
     </div>
   );
 };
 
-export default memo(AboutPage);
+export default About;

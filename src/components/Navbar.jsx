@@ -1,177 +1,77 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 const Navbar = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const [activeSection, setActiveSection] = useState("Home");
-    
-    const navItems = [
-        { href: "#Home", label: "Home" },
-        { href: "#About", label: "About" },
-        { href: "#Clients", label: "Clients" },
-        { href: "#Portofolio", label: "Portfolio" },
-        { href: "#Contact", label: "Contact" },
-    ];
+  const [scrolled, setScrolled] = useState(false);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-            const sections = navItems.map(item => {
-                const section = document.querySelector(item.href);
-                if (section) {
-                    return {
-                        id: item.href.replace("#", ""),
-                        offset: section.offsetTop - 550,
-                        height: section.offsetHeight
-                    };
-                }
-                return null;
-            }).filter(Boolean);
-
-            const currentPosition = window.scrollY;
-            const active = sections.find(section => 
-                currentPosition >= section.offset && 
-                currentPosition < section.offset + section.height
-            );
-
-            if (active) {
-                setActiveSection(active.id);
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-    }, [isOpen]);
-
-    const scrollToSection = (e, href) => {
-        e.preventDefault();
-        const section = document.querySelector(href);
-        if (section) {
-            const top = section.offsetTop - 100;
-            window.scrollTo({
-                top: top,
-                behavior: "smooth"
-            });
-        }
-        setIsOpen(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
     };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    return (
-        <nav
-            className={`fixed w-full top-0 z-50 transition-all duration-500 ${
-                isOpen
-                    ? "bg-white" 
-                    : scrolled
-                    ? "bg-white/70 backdrop-blur-xl border-b border-slate-100 shadow-sm" // Light Mode Scrolled
-                    : "bg-transparent"
-            }`}
-        >
-            <div className="mx-auto px-[5%] sm:px-[5%] lg:px-[10%]">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <div className="flex-shrink-0">
-                        <a
-                            href="#Home"
-                            onClick={(e) => scrollToSection(e, "#Home")}
-                            className="text-2xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent transition-opacity hover:opacity-80"
-                        >
-                            Rusdirmdhn
-                        </a>
-                    </div>
+  const scrollToSection = (e, href) => {
+    e.preventDefault();
+    const section = document.querySelector(href);
+    if (section) {
+      window.scrollTo({
+        top: section.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  return (
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b ${scrolled ? 'bg-[#000000]/90 backdrop-blur-xl border-white/[0.05] py-4' : 'bg-transparent border-transparent py-6'}`}>
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 flex justify-between items-center">
         
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:block">
-                        <div className="ml-8 flex items-center space-x-8">
-                            {navItems.map((item) => (
-                                <a
-                                    key={item.label}
-                                    href={item.href}
-                                    onClick={(e) => scrollToSection(e, item.href)}
-                                    className="group relative px-1 py-2 text-sm font-medium"
-                                >
-                                    <span
-                                        className={`relative z-10 transition-colors duration-300 ${
-                                            activeSection === item.href.substring(1)
-                                                ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-bold"
-                                                : "text-[#6366f1] font-medium group-hover:text-[#a855f7]" // Warna Ungu Default
-                                        }`}
-                                    >
-                                        {item.label}
-                                    </span>
-                                    {/* Garis Bawah Ungu */}
-                                    <span
-                                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] transform origin-left transition-transform duration-300 ${
-                                            activeSection === item.href.substring(1)
-                                                ? "scale-x-100"
-                                                : "scale-x-0 group-hover:scale-x-100"
-                                        }`}
-                                    />
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-        
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden">
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            // Icon Ungu (#6366f1)
-                            className={`relative p-2 text-[#6366f1] hover:text-[#a855f7] transition-transform duration-300 ease-in-out transform ${
-                                isOpen ? "rotate-90 scale-125" : "rotate-0 scale-100"
-                            }`}
-                        >
-                            {isOpen ? (
-                                <X className="w-6 h-6" />
-                            ) : (
-                                <Menu className="w-6 h-6" />
-                            )}
-                        </button>
-                    </div>
-                </div>
+        {/* Left: Logo */}
+        <div className="flex-1">
+          <a href="#Home" onClick={(e) => scrollToSection(e, "#Home")} className="inline-flex items-center space-x-3 text-white hover:opacity-70 transition-opacity">
+            <div className="flex flex-wrap w-[18px] h-[18px] gap-[2px]">
+              <div className="w-[8px] h-[8px] bg-white"></div>
+              <div className="w-[8px] h-[8px] border border-white"></div>
+              <div className="w-[8px] h-[8px] border border-white"></div>
+              <div className="w-[8px] h-[8px] bg-white"></div>
             </div>
-        
-            {/* Mobile Menu */}
-            <div
-                className={`md:hidden bg-white/95 backdrop-blur-md absolute w-full left-0 border-b border-slate-100 transition-all duration-300 ease-in-out ${
-                    isOpen
-                        ? "max-h-screen opacity-100 shadow-xl"
-                        : "max-h-0 opacity-0 overflow-hidden"
-                }`}
-            >
-                <div className="px-4 py-6 space-y-4">
-                    {navItems.map((item, index) => (
-                        <a
-                            key={item.label}
-                            href={item.href}
-                            onClick={(e) => scrollToSection(e, item.href)}
-                            className={`block px-4 py-3 text-lg font-medium transition-all duration-300 ease ${
-                                activeSection === item.href.substring(1)
-                                    ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-bold"
-                                    : "text-[#6366f1] hover:text-[#a855f7]" // Mobile Text Ungu
-                            }`}
-                            style={{
-                                transitionDelay: `${index * 100}ms`,
-                                transform: isOpen ? "translateX(0)" : "translateX(50px)",
-                                opacity: isOpen ? 1 : 0,
-                            }}
-                        >
-                            {item.label}
-                        </a>
-                    ))}
-                </div>
-            </div>
-        </nav>
-    );
+            <span className="text-sm font-bold tracking-[0.2em] uppercase">Rusdi</span>
+          </a>
+        </div>
+
+        {/* Center: Links */}
+        <div className="hidden md:flex flex-1 justify-center space-x-10 text-[10px] font-bold tracking-widest text-white uppercase">
+          <a href="#Home" onClick={(e) => scrollToSection(e, "#Home")} className="relative group hover:text-white/70 transition-colors">
+            Home <sup className="text-[7px] ml-0.5 opacity-50 absolute -top-1 -right-2">01</sup>
+          </a>
+          <a href="#Portofolio" onClick={(e) => scrollToSection(e, "#Portofolio")} className="relative group hover:text-white/70 transition-colors">
+            Portfolio <sup className="text-[7px] ml-0.5 opacity-50 absolute -top-1 -right-2">02</sup>
+          </a>
+          <a href="#About" onClick={(e) => scrollToSection(e, "#About")} className="relative group hover:text-white/70 transition-colors">
+            About <sup className="text-[7px] ml-0.5 opacity-50 absolute -top-1 -right-2">03</sup>
+          </a>
+          <a href="#Contact" onClick={(e) => scrollToSection(e, "#Contact")} className="relative group hover:text-white/70 transition-colors">
+            Contact <sup className="text-[7px] ml-0.5 opacity-50 absolute -top-1 -right-2">04</sup>
+          </a>
+        </div>
+
+        {/* Right: CTA */}
+        <div className="flex-1 flex justify-end">
+          <a href="#Contact" onClick={(e) => scrollToSection(e, "#Contact")} className="group flex items-center space-x-4">
+             <div className="flex flex-col text-right hidden sm:flex">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white">Let's Talk</span>
+                <span className="text-[10px] text-white/50 tracking-widest uppercase">Available Now</span>
+             </div>
+             <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" strokeWidth={2.5} />
+             </div>
+          </a>
+        </div>
+
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
